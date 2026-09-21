@@ -1,0 +1,129 @@
+// use prisma-8
+
+enum UserRole {
+  RESTAURANT
+  NGO
+  VOLUNTEER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING
+}
+
+enum DonationStatus {
+  AVAILABLE
+  REQUESTED
+  ACCEPTED
+  PICKED_UP
+  DELIVERED
+  EXPIRED
+  CANCELLED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
+enum PickupStatus {
+  PENDING
+  ASSIGNED
+  COLLECTED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id           Uuid       @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String     @unique
+  passwordHash String
+  phone        String?
+  role         UserRole
+  status       UserStatus @default(ACTIVE)
+
+  city         String?
+  district     String?
+
+  createdAt DateTime              @default(now())
+  updatedAt temporal.updatedAt()
+
+  donations Donation[]
+  requests  DonationRequest[]
+  pickups   Pickup[] @relation("VolunteerPickups")
+}
+
+model Donation {
+  id             Uuid           @id @default(uuid())
+  title          String
+  description    String?
+  foodCategory   String
+  quantity       Float
+  quantityUnit   String
+  imageUrl       String?
+  expiryTime     DateTime
+  pickupAddress  String
+  pickupCity     String
+  pickupDistrict String
+
+  status DonationStatus @default(AVAILABLE)
+
+  providerId Uuid
+  provider   User @relation(fields: [providerId], references: [id])
+
+  createdAt DateTime              @default(now())
+  updatedAt temporal.updatedAt()
+
+  requests DonationRequest[]
+  pickups  Pickup[]
+}
+
+model DonationRequest {
+  id Uuid @id @default(uuid())
+
+  donationId Uuid
+  donation   Donation @relation(fields: [donationId], references: [id])
+
+  ngoId Uuid
+  ngo   User @relation(fields: [ngoId], references: [id])
+
+  status RequestStatus @default(PENDING)
+
+  requestedAt DateTime              @default(now())
+  updatedAt   temporal.updatedAt()
+
+  pickup Pickup?
+}
+
+model Pickup {
+  id Uuid @id @default(uuid())
+
+  donationId Uuid
+  donation   Donation @relation(fields: [donationId], references: [id])
+
+  volunteerId Uuid
+  volunteer   User @relation(
+    "VolunteerPickups",
+    fields: [volunteerId],
+    references: [id]
+  )
+
+  requestId Uuid @unique
+  request   DonationRequest @relation(fields: [requestId], references: [id])
+
+  status PickupStatus @default(PENDING)
+
+  qrCode      String?   @unique
+  collectedAt DateTime?
+  deliveredAt DateTime?
+
+  createdAt DateTime              @default(now())
+  updatedAt temporal.updatedAt()
+}

@@ -1,0 +1,7 @@
+{
+  "name": "zerowaste-connect",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ZeroWaste Connect - Food Rescue and Donation Platform for Sri Lanka",
+  "packageManager": "pnpm@12.4.2"
+}
