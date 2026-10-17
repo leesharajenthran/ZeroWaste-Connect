@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { z, type ZodType } from "zod";
+import type { ZodType } from "zod";
 
 export function validate(schema: ZodType) {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -16,6 +16,7 @@ export function validate(schema: ZodType) {
         errors: result.error.issues,
       });
     }
+    req.body = (result.data as { body: unknown }).body;
 
     next();
   };

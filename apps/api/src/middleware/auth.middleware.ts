@@ -1,11 +1,10 @@
 import type { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/jwt.js";
+import type { UserRole } from "../types/auth.types.js";
+import type { AuthUser } from "../types/auth.types.js";
 
 export interface AuthenticatedRequest extends Request {
-  user?: {
-    userId: string;
-    role: string;
-  };
+  user?: AuthUser;
 }
 
 export function authenticate(
@@ -27,10 +26,10 @@ export function authenticate(
   try {
     const payload = verifyToken(token);
 
-    req.user = {
-      userId: payload.userId,
-      role: payload.role,
-    };
+   req.user = {
+  userId: payload.userId,
+  role: payload.role as UserRole,
+};
 
     next();
   } catch {

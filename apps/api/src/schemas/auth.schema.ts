@@ -19,3 +19,32 @@ export const loginSchema = z.object({
     password: z.string().min(1, "Password is required"),
   }),
 });
+
+export const updateProfileSchema = z.object({
+  body: z.object({
+    firstName: z
+      .string()
+      .min(2, "First name must be at least 2 characters")
+      .optional(),
+
+    lastName: z
+      .string()
+      .min(2, "Last name must be at least 2 characters")
+      .optional(),
+
+    phone: z
+      .string()
+      .min(7, "Invalid phone number")
+      .optional(),
+
+    city: z
+      .string()
+      .min(2, "City must be at least 2 characters")
+      .optional(),
+
+    district: z
+      .string()
+      .min(2, "District must be at least 2 characters")
+      .optional(),
+  }),
+});

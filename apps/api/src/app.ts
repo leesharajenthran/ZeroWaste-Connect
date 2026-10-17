@@ -8,6 +8,7 @@ import { env } from "./config/env.js";
 import helmet from "helmet";
 import { notFoundMiddleware } from "./middleware/not-found.middleware.js";
 import { requestLogMiddleware } from "./middleware/request-log.middleware.js";
+import userRoutes from "./routes/user.routes.js";
 
 const app = express();
 app.use(requestLogMiddleware);
@@ -20,6 +21,7 @@ app.use(
 );
 app.use(express.json({ limit: "1mb" }));
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 app.get("/api/health", (_req, res) => {
   return successResponse(
